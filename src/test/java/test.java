@@ -1,4 +1,6 @@
-class test {
+package java;
+
+public class test {
 
 
 
