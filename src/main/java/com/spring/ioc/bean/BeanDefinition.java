@@ -12,9 +12,12 @@ public class BeanDefinition {
 
     private Class beanClass;
 
-    public BeanDefinition(Object bean) {
-        this.bean = bean;
-    }
+    private String beanClassName;
+
+    private PropertyValues propertyValues;
+
+    public BeanDefinition(){};
+
 
     public Object getBean() {
         return bean;
@@ -31,4 +34,27 @@ public class BeanDefinition {
     public void setBeanClass(Class beanClass) {
         this.beanClass = beanClass;
     }
+
+    public String getBeanClassName() {
+        return beanClassName;
+    }
+
+    public void setBeanClassName(String beanClassName) {
+        try{
+            this.beanClass =  Class.forName(beanClassName);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        this.beanClassName = beanClassName;
+    }
+
+    public PropertyValues getPropertyValues() {
+        return propertyValues;
+    }
+
+    public void setPropertyValues(PropertyValues propertyValues) {
+        this.propertyValues = propertyValues;
+    }
+
+
 }

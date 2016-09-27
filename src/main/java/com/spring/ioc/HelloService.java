@@ -5,7 +5,9 @@ package com.spring.ioc;
  */
 public class HelloService {
 
+    public String mykey;
+
     public void sayHello() {
-        System.out.println("123456789");
+        System.out.println(mykey);
     }
 }
