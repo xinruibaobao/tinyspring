@@ -3,26 +3,31 @@ package com.spring.ioc.resource;
 import com.spring.ioc.bean.BeanDefinition;
 import com.spring.ioc.bean.PropertyValue;
 import com.spring.ioc.bean.PropertyValues;
+import com.spring.ioc.beanfactory.BeanFactory;
+import com.spring.ioc.io.ResourceLoader;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by majinliang on 16/9/27.
  */
-public class XmlBeanDefinitionReader {
+public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
-    Map<String,BeanDefinition> beanMap = new HashMap<String,BeanDefinition>();
+    public XmlBeanDefinitionReader(ResourceLoader resourceLoader) {
+        super(resourceLoader);
+    }
 
     public void loadBeanDefinitions(String xmlName) throws Exception {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
-        String path = this.getClass().getClassLoader().getResource("").getPath();
-        Document document = db.parse(path  + xmlName);
+        InputStream inputStream = getResourceLoader().getResource(xmlName).getInputStream();
+        Document document = db.parse(inputStream);
         //根节点
         Node rootNode = document.getElementsByTagName("beans").item(0);
         //bean节点
@@ -38,7 +43,7 @@ public class XmlBeanDefinitionReader {
             BeanDefinition beanDefinition = new BeanDefinition();
             beanDefinition.setBeanClassName(classNode.getNodeValue());
             setPropertyValues(node,beanDefinition);
-            beanMap.put(idNode.getNodeValue(),beanDefinition);
+            getRegistry().put(idNode.getNodeValue(),beanDefinition);
         }
     }
 
@@ -59,18 +64,4 @@ public class XmlBeanDefinitionReader {
         }
     }
 
-    public static void main(String args []) {
-
-        XmlBeanDefinitionReader xdr = new XmlBeanDefinitionReader();
-        try {
-            xdr.loadBeanDefinitions("beans.xml");
-            Map map = xdr.beanMap;
-            System.out.println(map.size());
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-
-
-    }
 }
