@@ -15,7 +15,7 @@
 
 
     <bean name="helloService" class="com.spring.ioc.HelloService">
-        <property name="mykey" value="iocsddd"></property>
+        <property name="mykey" value="6666"></property>
         <property name="refService" ref="refService"></property>
     </bean>
 

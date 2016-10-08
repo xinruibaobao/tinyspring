@@ -10,8 +10,6 @@ import java.util.Map;
  */
 public interface BeanFactory {
 
-    public void registerBeanDedinition(String beanName,BeanDefinition beanDefinition) throws Exception;
-
     public Object getBean(String className) throws Exception;
 
 }
