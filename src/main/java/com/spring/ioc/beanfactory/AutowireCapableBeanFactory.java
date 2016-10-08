@@ -3,6 +3,7 @@ package com.spring.ioc.beanfactory;
 import com.spring.ioc.bean.BeanDefinition;
 import com.spring.ioc.bean.PropertyValue;
 import com.spring.ioc.bean.PropertyValues;
+import com.spring.ioc.resource.BeanReference;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -16,22 +17,9 @@ public class AutowireCapableBeanFactory extends  AbstractBeanFactory {
 
     @Override
     protected Object doCreateBean(BeanDefinition beanDefinition) throws Exception {
-        Object object = null;
-        try{
-            PropertyValues propertyValues = beanDefinition.getPropertyValues();
-            List<PropertyValue> propertyList = propertyValues.getPropertyList();
-            Class beanClass = beanDefinition.getBeanClass();
-            object = beanClass.newInstance();
-
-            for(PropertyValue propertyValue:propertyList) {
-                Field field = beanClass.getField(propertyValue.getName());
-                field.set(object,propertyValue.getValue());
-
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
+        Object  object = createBeanInstance(beanDefinition);
+        beanDefinition.setBean(object);
+        applyPropertyValues(object,beanDefinition);
         return object;
     }
 
@@ -43,7 +31,14 @@ public class AutowireCapableBeanFactory extends  AbstractBeanFactory {
         for(PropertyValue propertyValue:mbd.getPropertyValues().getPropertyValues()){
             Field declaredField = bean.getClass().getDeclaredField(propertyValue.getName());;
             declaredField.setAccessible(true);
-            declaredField.set(bean, propertyValue.getValue());
+            Object value = propertyValue.getValue();
+            if(value instanceof BeanReference) {
+                BeanReference beanReference = (BeanReference) value;
+                value = getBean(beanReference.getName());
+            }
+            declaredField.set(bean, value);
         }
     }
+
+
 }

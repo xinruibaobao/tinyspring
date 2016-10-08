@@ -4,7 +4,7 @@
 public class TestService {
 
     public void shuchu(){
-        System.out.println("执行service方法");
+        //System.out.println("执行service方法");
     }
 
 }

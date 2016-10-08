@@ -16,25 +16,25 @@ public class ForthStageTest {
     @Test
     public void test() {
 
-        XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(new ResourceLoader());
-        try {
-            xmlBeanDefinitionReader.loadBeanDefinitions("../classes/beans.xml");
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        BeanFactory beanFactory = new AutowireCapableBeanFactory();
-        for(Map.Entry<String, BeanDefinition> beanDefinitionEntry:xmlBeanDefinitionReader.getRegistry().entrySet()){
-            try {
-                beanFactory.registerBeanDedinition(beanDefinitionEntry.getKey(), beanDefinitionEntry.getValue());
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        HelloService helloService = (HelloService) beanFactory.getBean("helloService");
-        helloService.sayHello();
-
+//        XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(new ResourceLoader());
+//        try {
+//            xmlBeanDefinitionReader.loadBeanDefinitions("beans.xml");
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        BeanFactory beanFactory = new AutowireCapableBeanFactory();
+//        for(Map.Entry<String, BeanDefinition> beanDefinitionEntry:xmlBeanDefinitionReader.getRegistry().entrySet()){
+//            try {
+//                beanFactory.registerBeanDedinition(beanDefinitionEntry.getKey(), beanDefinitionEntry.getValue());
+//            } catch(Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        HelloService helloService = (HelloService) beanFactory.getBean("helloService");
+//        helloService.sayHello();
+//
 
     }
 

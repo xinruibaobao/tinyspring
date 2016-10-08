@@ -23,44 +23,67 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         super(resourceLoader);
     }
 
-    public void loadBeanDefinitions(String xmlName) throws Exception {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        InputStream inputStream = getResourceLoader().getResource(xmlName).getInputStream();
-        Document document = db.parse(inputStream);
-        //根节点
-        Node rootNode = document.getElementsByTagName("beans").item(0);
-        //bean节点
-        NodeList nodeList = rootNode.getChildNodes();
-        for(int i=0;i<nodeList.getLength();i++){
-            Node node = nodeList.item(i);
-            if(node.getNodeType()!=1) {
-                continue;
+
+    public void loadBeanDefinitions(String location) throws Exception {
+        InputStream inputStream = getResourceLoader().getResource(location).getInputStream();
+        doLoadBeanDefinitions(inputStream);
+    }
+
+    protected void doLoadBeanDefinitions(InputStream inputStream) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = factory.newDocumentBuilder();
+        Document doc = docBuilder.parse(inputStream);
+        // 解析bean
+        registerBeanDefinitions(doc);
+        inputStream.close();
+    }
+
+    public void registerBeanDefinitions(Document doc) {
+        Element root = doc.getDocumentElement();
+
+        parseBeanDefinitions(root);
+    }
+
+    protected void parseBeanDefinitions(Element root) {
+        NodeList nl = root.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node node = nl.item(i);
+            if (node instanceof Element) {
+                Element ele = (Element) node;
+                processBeanDefinition(ele);
             }
-            NamedNodeMap namedNodeMap = node.getAttributes();
-            Node idNode = namedNodeMap.getNamedItem("id");
-            Node classNode = namedNodeMap.getNamedItem("class");
-            BeanDefinition beanDefinition = new BeanDefinition();
-            beanDefinition.setBeanClassName(classNode.getNodeValue());
-            setPropertyValues(node,beanDefinition);
-            getRegistry().put(idNode.getNodeValue(),beanDefinition);
         }
     }
 
-    private void setPropertyValues(Node node,BeanDefinition beanDefinition) {
-        PropertyValues propertyValues = new PropertyValues();
-        NodeList nodeList = node.getChildNodes();
-        for(int i=0;i<nodeList.getLength();i++) {
-            Node childNode = nodeList.item(i);
-            if(childNode.getNodeType()!=1) {
-                continue;
+    protected void processBeanDefinition(Element ele) {
+        String name = ele.getAttribute("name");
+        String className = ele.getAttribute("class");
+        BeanDefinition beanDefinition = new BeanDefinition();
+        processProperty(ele,beanDefinition);
+        beanDefinition.setBeanClassName(className);
+        getRegistry().put(name, beanDefinition);
+    }
+
+    private void processProperty(Element ele,BeanDefinition beanDefinition) {
+        NodeList propertyNode = ele.getElementsByTagName("property");
+        for (int i = 0; i < propertyNode.getLength(); i++) {
+            Node node = propertyNode.item(i);
+            if (node instanceof Element) {
+                Element propertyEle = (Element) node;
+                String name = propertyEle.getAttribute("name");
+                String value = propertyEle.getAttribute("value");
+                if (value != null && value.length() > 0) {
+                    beanDefinition.getPropertyValues().addPropertyValue(new PropertyValue(name, value));
+                } else {
+                    String ref = propertyEle.getAttribute("ref");
+                    if (ref == null || ref.length() == 0) {
+                        throw new IllegalArgumentException("Configuration problem: <property> element for property '"
+                                + name + "' must specify a ref or value");
+                    }
+                    BeanReference beanReference = new BeanReference(ref);
+                    beanDefinition.getPropertyValues().addPropertyValue(new PropertyValue(name, beanReference));
+                }
             }
-            NamedNodeMap namedNodeMap = childNode.getAttributes();
-            String name =  namedNodeMap.getNamedItem("name").getNodeValue();
-            String value = namedNodeMap.getNamedItem("value").getNodeValue() ;
-            PropertyValue propertyValue = new PropertyValue(name,value);
-            propertyValues.addPropertyValue(propertyValue);
-            beanDefinition.setPropertyValues(propertyValues);
         }
     }
 

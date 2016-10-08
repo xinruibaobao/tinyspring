@@ -13,22 +13,20 @@ public class ThirdStageTest {
 
     @Test
     public void test() {
-
-        BeanFactory beanFactory = new AutowireCapableBeanFactory();
-        BeanDefinition beanDefinition = new BeanDefinition();
-        beanDefinition.setBeanClassName("com.spring.ioc.HelloService");
-        PropertyValue propertyValue = new PropertyValue("mykey","hello");
-        beanDefinition.getPropertyValues().addPropertyValue(propertyValue);
-
-        try{
-            beanFactory.registerBeanDedinition("testBean",beanDefinition);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-
-        HelloService helloService = (HelloService)beanFactory.getBean("testBean");
-        helloService.sayHello();
-
+//        BeanFactory beanFactory = new AutowireCapableBeanFactory();
+//        BeanDefinition beanDefinition = new BeanDefinition();
+//        beanDefinition.setBeanClassName("com.spring.ioc.HelloService");
+//        PropertyValue propertyValue = new PropertyValue("mykey","hello");
+//        beanDefinition.getPropertyValues().addPropertyValue(propertyValue);
+//
+//        try{
+//            beanFactory.registerBeanDedinition("testBean",beanDefinition);
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        HelloService helloService = (HelloService)beanFactory.getBean("testBean");
+//        helloService.sayHello();
     }
 }
