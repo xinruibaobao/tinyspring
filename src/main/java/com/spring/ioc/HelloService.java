@@ -10,6 +10,7 @@ public class HelloService {
     private RefService refService;
 
     public RefService getRefService() {
+        //测试冲突
         return refService;
     }
 
